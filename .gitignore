@@ -1,4 +1,12 @@
 .idea/
+.ipynb_checkpoints/
+monitor_output/
+videos/
 
 *.log
+*.pyc
+*.pth
+.DS_Store
+
+
 

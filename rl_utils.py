@@ -3,6 +3,9 @@ import numpy as np
 import torch
 import collections
 import random
+import matplotlib.pyplot as plt
+import json
+
 
 class ReplayBuffer:
     def __init__(self, capacity):
@@ -34,10 +37,12 @@ def train_on_policy_agent(env, agent, num_episodes):
             for i_episode in range(int(num_episodes/10)):
                 episode_return = 0
                 transition_dict = {'states': [], 'actions': [], 'next_states': [], 'rewards': [], 'dones': []}
-                state = env.reset()
+                state = env.reset()  # 重置环境
                 done = False
+
+                # 一次交互过程
                 while not done:
-                    action = agent.take_action(state)
+                    action = agent.take_action(state)  # 获取下一步动作
                     next_state, reward, done, _ = env.step(action)
                     transition_dict['states'].append(state)
                     transition_dict['actions'].append(action)
@@ -46,8 +51,9 @@ def train_on_policy_agent(env, agent, num_episodes):
                     transition_dict['dones'].append(done)
                     state = next_state
                     episode_return += reward
-                return_list.append(episode_return)
-                agent.update(transition_dict)
+
+                return_list.append(episode_return)  # 总奖励
+                agent.update(transition_dict)  # 更新参数
                 if (i_episode+1) % 10 == 0:
                     pbar.set_postfix({'episode': '%d' % (num_episodes/10 * i + i_episode+1), 'return': '%.3f' % np.mean(return_list[-10:])})
                 pbar.update(1)
@@ -87,4 +93,27 @@ def compute_advantage(gamma, lmbda, td_delta):
         advantage_list.append(advantage)
     advantage_list.reverse()
     return torch.tensor(advantage_list, dtype=torch.float)
-                
+
+
+def reward_visualize(return_file: str, env_name: str = "CartPole-v0"):
+    """总奖励可视化"""
+
+    # 读取总回报
+    with open(return_file, "r", encoding="utf-8") as fp:
+        return_list = json.load(fp)
+
+    episodes_list = list(range(len(return_list)))
+    plt.plot(episodes_list, return_list)
+    plt.xlabel('Episodes')
+    plt.ylabel('Returns')
+    plt.title('REINFORCE on {}'.format(env_name))
+    plt.show()
+
+    # 平滑处理
+    mv_return = moving_average(return_list, 9)
+    plt.plot(episodes_list, mv_return)
+    plt.xlabel('Episodes')
+    plt.ylabel('Returns')
+    plt.title('REINFORCE on {}'.format(env_name))
+    plt.show()
+
