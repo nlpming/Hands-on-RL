@@ -75,8 +75,8 @@ class REINFORCE:
             G = self.gamma * G + reward
             loss.append(-log_prob * G)
         loss = torch.cat(loss).sum()
-        loss.backward()
-        self.optimizer.step()  # 梯度下降
+        loss.backward()  # 反向传播计算梯度
+        self.optimizer.step()  # 梯度下降更新参数
 
 
 
@@ -122,7 +122,6 @@ def train():
                     # reward: 奖励值
                     # done: 游戏是否结束
                     next_state, reward, done, _ = env.step(action)
-
                     transition_dict['states'].append(state)
                     transition_dict['actions'].append(action)
                     transition_dict['next_states'].append(next_state)

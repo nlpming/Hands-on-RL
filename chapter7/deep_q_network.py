@@ -121,7 +121,7 @@ class DQN:
 
 def train_dqn():
     lr = 2e-3   # 学习率
-    num_episodes = 1000   # 初始值500
+    num_episodes = 2000   # 初始值500
     hidden_dim = 128
     gamma = 0.98
     epsilon = 0.01  # epsilon-贪婪策略
@@ -200,6 +200,8 @@ def test_dqn(max_step: int = 10000):
 
     env_name = 'CartPole-v0'
     env = gym.make(env_name)
+    env._max_episode_steps = max_step
+
     random.seed(0)
     np.random.seed(0)
     env.seed(0)
@@ -223,7 +225,7 @@ def test_dqn(max_step: int = 10000):
 
 
 if __name__ == "__main__":
-    # train_dqn()
-    # rl_utils.reward_visualize("./return_list.json", env_name="CartPole-v0")
+    train_dqn()
+    rl_utils.reward_visualize("./return_list.json", env_name="CartPole-v0", algorithm_name="dqn")
     test_dqn()
 

@@ -52,7 +52,7 @@ def train_on_policy_agent(env, agent, num_episodes):
                     state = next_state
                     episode_return += reward
 
-                return_list.append(episode_return)  # 总奖励
+                return_list.append(episode_return)  # 一次episode总奖励
                 agent.update(transition_dict)  # 更新参数
                 if (i_episode+1) % 10 == 0:
                     pbar.set_postfix({'episode': '%d' % (num_episodes/10 * i + i_episode+1), 'return': '%.3f' % np.mean(return_list[-10:])})
@@ -95,7 +95,7 @@ def compute_advantage(gamma, lmbda, td_delta):
     return torch.tensor(advantage_list, dtype=torch.float)
 
 
-def reward_visualize(return_file: str, env_name: str = "CartPole-v0"):
+def reward_visualize(return_file: str, env_name: str = "CartPole-v0", algorithm_name: str = "reinforce"):
     """总奖励可视化"""
 
     # 读取总回报
@@ -106,7 +106,7 @@ def reward_visualize(return_file: str, env_name: str = "CartPole-v0"):
     plt.plot(episodes_list, return_list)
     plt.xlabel('Episodes')
     plt.ylabel('Returns')
-    plt.title('REINFORCE on {}'.format(env_name))
+    plt.title('{} on {}'.format(algorithm_name, env_name))
     plt.show()
 
     # 平滑处理
@@ -114,6 +114,6 @@ def reward_visualize(return_file: str, env_name: str = "CartPole-v0"):
     plt.plot(episodes_list, mv_return)
     plt.xlabel('Episodes')
     plt.ylabel('Returns')
-    plt.title('REINFORCE on {}'.format(env_name))
+    plt.title('{} on {}'.format(algorithm_name, env_name))
     plt.show()
 
